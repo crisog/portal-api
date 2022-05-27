@@ -257,8 +257,8 @@ export class CherryPicker {
         // Don't use weighting until there have been at least 20 requests
         if (totalResults > 20) {
           serviceQuality.weightedSuccessLatency = (
-            bucketedServiceQuality.median +
-            0.3 * bucketedServiceQuality.p90
+            (bucketedServiceQuality.median + 0.3) *
+            bucketedServiceQuality.p90
           ).toFixed(5)
         }
         serviceQuality.metadata = {
