@@ -24,6 +24,10 @@ const EXPECTED_SUCCESS_LATENCY = 0.15
 // This multiplier is tested to produce a curve that adequately punishes slow nodes
 const WEIGHT_MULTIPLIER = 35
 
+// Minimum amount of relays needed on the cherry picker cache to start calculating the weighted latency
+// of the node, this is to enforce harsher bucket positioning based on median and p90s
+const MIN_RELAYS_TO_CALCULATE_WEIGHTED_LATENCY = 10
+
 export class CherryPicker {
   checkDebug: boolean
   redis: Redis
@@ -255,7 +259,7 @@ export class CherryPicker {
         // Weighted latency is the median elapsed time + 50% (p90 elapsed time)
         // This weights the nodes better than a simple average
         // Don't use weighting until there have been at least 20 requests
-        if (totalResults > 20) {
+        if (totalResults > MIN_RELAYS_TO_CALCULATE_WEIGHTED_LATENCY) {
           serviceQuality.weightedSuccessLatency = (
             (bucketedServiceQuality.median + 0.3) *
             bucketedServiceQuality.p90
